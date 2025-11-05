@@ -1,0 +1,148 @@
+/* 🌈 Osnovni izgled */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #ffecd2, #fcb69f);
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fff8f0;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+h1 {
+  text-align: center;
+  color: #ff6f61;
+  margin-bottom: 25px;
+}
+
+/* 🧾 Form inputs */
+form input,
+form textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* 🔍 SEARCH + FILTER WRAPPER */
+.search-filter-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* 🔍 SEARCH BOX */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.search-box input {
+  width: 250px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: 0.3s;
+  background-color: #fff;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.search-box input:focus {
+  border-color: #ff6f61;
+  box-shadow: 0 0 6px rgba(255, 111, 97, 0.4);
+  outline: none;
+}
+
+/* Reset gumb */
+.reset-btn {
+  background-color: #ff914d;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reset-btn:hover {
+  background-color: #ff7f2a;
+}
+
+/* ⏱️ FILTER BOX */
+.filter-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.filter-box select {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  color: #444;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.filter-box select:hover {
+  border-color: #ff6f61;
+  box-shadow: 0 0 6px rgba(255, 111, 97, 0.3);
+}
+
+.filter-label {
+  color: #555;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* 📱 Responsivno */
+@media (max-width: 700px) {
+  .container {
+    margin: 15px;
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 1.6em;
+  }
+
+  .search-filter-wrapper {
+    align-items: stretch;
+  }
+
+  .search-box,
+  .filter-box {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .search-box input,
+  .filter-box select,
+  .reset-btn {
+    width: 100%;
+    height: auto;
+  }
+}

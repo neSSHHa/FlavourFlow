@@ -1,0 +1,96 @@
+.recipe-list {
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.recipe-list h2 {
+  text-align: center;
+  color: #ff6f61;
+  margin-bottom: 25px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.recipe-card {
+  border: 1px solid #ff6f61;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #fff8f0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recipe-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-title {
+  text-decoration: none;
+  color: #ff6f61;
+  font-weight: bold;
+  font-size: 1.2em;
+  transition: color 0.2s ease;
+}
+
+.recipe-title:hover {
+  color: #d9534f;
+}
+
+.button-group {
+  margin-top: 10px;
+}
+
+.btn-edit,
+.btn-delete {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background-color: #ff6f61;
+  color: white;
+  margin-right: 8px;
+}
+
+.btn-edit:hover {
+  background-color: #e65a50;
+}
+
+.btn-delete {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn-delete:hover {
+  background-color: #aaa;
+}
+
+.recipe-detail {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fff8f0;
+  border: 1px solid #ff6f61;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.recipe-detail h2 {
+  color: #ff6f61;
+  margin-bottom: 10px;
+}
+
+.recipe-detail p {
+  margin: 8px 0;
+}
+
+.recipe-detail a {
+  color: #ff6f61;
+  text-decoration: none;
+}
+
