@@ -6,6 +6,36 @@ RIS projekt - Aplikacija za upravljanje receptov
 
 FlavourFlow je aplikacija za upravljanje receptov, sestavljena iz Spring Boot backend-a in React frontend-a. Aplikacija omogoča prikazovanje, iskanje in upravljanje receptov.
 
+## Vizija
+
+Flavor Flow je aplikacija, namenjena hitremu shranjevanju, pregledovanju in organiziranju receptov, da uporabnikom olajša načrtovanje obrokov. Cilj projekta je ustvariti intuitivno digitalno kuharsko zbirko, ki omogoča enostavno iskanje, filtriranje in upravljanje receptov. Aplikacija je namenjena domačim kuharjem, začetnikom ali vsakomur, ki želi imeti pregledno in dostopno zbirko svojih najljubših jedi.
+
+## Besednjak
+
+| **Pojem**                    | **Pomen v aplikaciji**                                                                             |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Recept**                   | Struktura, ki vsebuje ime, sestavine, navodila, slike, komentarje in ocene.                        |
+| **Priljubljeni (Favorites)** | Seznam receptov, ki jih je uporabnik označil kot najljubše.                                        |
+| **Priljubljeni seznam**      | Pogled, kjer uporabnik vidi vse recepte, dodane med priljubljene.                                   |
+| **Iskanje recepta**          | Funkcija, ki uporabniku omogoča, da najde recepte po ključnih besedah ali imenu.                   |
+| **Filtriranje**              | Razširjen način iskanja, ki omogoča prikaz receptov glede na kategorijo časa, oceno ali sestavine. |
+| **Komentar**                 | Besedilno mnenje uporabnika, dodano pod posamezen recept.                                          |
+| **Ocena**                    | Numerična vrednost (npr. 1–5), ki jo uporabnik dodeli receptu.                                     |
+| **Tip receptov**             | Kategorizacija recepta glede na vrsto jedi (predjelo, glavno jelo, desert, prilog, solata).        |
+| **Uporabniški profil**       | Osebna stran uporabnika, kjer so prikazane njegove informacije, naloženi recepti in aktivnost.     |
+| **Sestavine**          | Seznam živil ali količin, potrebnih za pripravo posamezne jedi. |
+| **Navodila**           | Koraki oziroma postopek, ki opisuje pripravo recepta.                                   |
+
+
+
+## Arhitektura
+
+### UDP Diagram
+
+![UDP Diagram](images/FlavourFlow2.jpg)
+
+*Diagram uporabniških primerov (UDP) prikazuje glavne funkcionalnosti aplikacije in njihove uloge.*
+
 ## Dokumentacija za razvijalce
 
 ### Projektna struktura
