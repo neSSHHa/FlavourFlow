@@ -32,7 +32,7 @@ Flavor Flow je aplikacija, namenjena hitremu shranjevanju, pregledovanju in orga
 
 ### DPU Diagram
 
-![DPU Diagram](images/FlavourFlow2.jpg)
+![DPU Diagram](images/FlavourFlow2.png)
 
 *Diagram Primerov Uporabe (DPU) prikazuje glavne funkcionalnosti aplikacije in njihove vloge.*
 
