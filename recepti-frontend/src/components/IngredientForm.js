@@ -29,7 +29,9 @@ export default function IngredientForm({ onSave }) {
         placeholder="Ingredient name"
         required
       />
-      <button type="submit" className="btn-edit">Add Ingredient</button>
+      <div className="form-buttons">
+        <button type="submit">Add Ingredient</button>
+      </div>
     </form>
   );
 }

@@ -3,6 +3,11 @@
   margin: 20px auto;
 }
 
+.recipe-list {
+  max-width: 800px;
+  margin: 20px auto;
+}
+
 .recipe-list h2 {
   text-align: center;
   color: #ff6f61;

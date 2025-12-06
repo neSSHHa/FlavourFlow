@@ -6,14 +6,19 @@ import RecipeList from './components/RecipeList';
 import SearchBox from './components/SearchBox';
 import IngredientList from './components/IngredientList';
 import IngredientForm from './components/IngredientForm';
+import Login from './components/Login';
+import Register from './components/Register';
+import Header from './components/Header';
 import './index.css';
 import './components/css/RecipeList.css';
+import './components/css/Header.css';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
   const [editRecipe, setEditRecipe] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [ingredients, setIngredients] = useState([]);
+  const [user, setUser] = useState(null);
 
   const API_URL = 'http://localhost:8080/api/recipes';
   const INGREDIENTS_API_URL = 'http://localhost:8080/api/ingredients';
@@ -30,7 +35,22 @@ function App() {
     setIngredients(data);
   };
 
+  // Učitaj user info iz localStorage pri pokretanju
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    const username = localStorage.getItem('username');
+    const role = localStorage.getItem('role');
+
+    if (token && username) {
+      setUser({
+        userId: userId,
+        username: username,
+        role: role,
+        token: token
+      });
+    }
+
     fetchRecipes();
     fetchIngredients();
   }, []);
@@ -98,56 +118,46 @@ function App() {
         fetchIngredients();
     };
 
+  // Auth handlers
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   return (
     <Router>
       <div className="container">
-        <h1>Flavor Flow</h1>
-        
-        <nav style={{ marginBottom: '20px', textAlign: 'center' }}>
-          <Link 
-            to="/" 
-            style={{ 
-              margin: '0 15px', 
-              color: '#ff6f61', 
-              textDecoration: 'none', 
-              fontWeight: 'bold',
-              fontSize: '16px'
-            }}
-          >
-            Recipes
-          </Link>
-          <Link 
-            to="/ingredients" 
-            style={{ 
-              margin: '0 15px', 
-              color: '#ff6f61', 
-              textDecoration: 'none', 
-              fontWeight: 'bold',
-              fontSize: '16px'
-            }}
-          >
-            Ingredients
-          </Link>
-        </nav>
+        <Header user={user} onLogout={handleLogout} />
 
         <Routes>
           <Route
             path="/"
             element={
               <>
-                <RecipeForm
-                  onSave={handleSave}
-                  editData={editRecipe}
-                  onCancel={handleCancel}
-                />
+                <div className="form-search-layout">
+                  <div className="form-section">
+                    <RecipeForm
+                      onSave={handleSave}
+                      editData={editRecipe}
+                      onCancel={handleCancel}
+                    />
+                  </div>
 
-                <SearchBox
-                    searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
-                    handleSearch={handleSearch}
-                    fetchRecipes={fetchRecipes}
-                    handleFilter={handleFilter}
-                />
+                  <div className="divider"></div>
+
+                  <div className="search-section">
+                    <SearchBox
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        handleSearch={handleSearch}
+                        fetchRecipes={fetchRecipes}
+                        handleFilter={handleFilter}
+                    />
+                  </div>
+                </div>
 
                 <RecipeList
                   recipes={recipes}
@@ -170,6 +180,8 @@ function App() {
             } 
           />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/register" element={<Register onLogin={handleLogin} />} />
         </Routes>
       </div>
     </Router>

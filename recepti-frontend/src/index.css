@@ -15,13 +15,35 @@ body {
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-h1 {
-  text-align: center;
-  color: #ff6f61;
-  margin-bottom: 25px;
+/* Form and Search Layout */
+.form-search-layout {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+  align-items: start;
+}
+
+.form-section {
+  flex: 1;
+}
+
+.search-section {
+  flex: 1;
+}
+
+.divider {
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #ff6f61, transparent);
+  margin: 0 10px;
 }
 
 /* 🧾 Form inputs */
+.recipe-form {
+  display: flex;
+  flex-direction: column;
+}
+
 form input,
 form textarea {
   width: 100%;
@@ -30,6 +52,49 @@ form textarea {
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
+  box-sizing: border-box;
+}
+
+form textarea {
+  min-height: 80px;
+  max-height: 120px;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.recipe-form button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.recipe-form button[type="submit"] {
+  background-color: #ff6f61;
+  color: white;
+}
+
+.recipe-form button[type="submit"]:hover {
+  background-color: #e65a50;
+}
+
+.recipe-form button[type="button"] {
+  background-color: #ccc;
+  color: #333;
+}
+
+.recipe-form button[type="button"]:hover {
+  background-color: #aaa;
 }
 
 /* 🔍 SEARCH + FILTER WRAPPER */
@@ -119,14 +184,21 @@ form textarea {
 }
 
 /* 📱 Responsivno */
+@media (max-width: 968px) {
+  .form-search-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
 @media (max-width: 700px) {
   .container {
     margin: 15px;
     padding: 15px;
-  }
-
-  h1 {
-    font-size: 1.6em;
   }
 
   .search-filter-wrapper {

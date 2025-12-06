@@ -65,12 +65,14 @@ export default function RecipeForm({ onSave, editData, onCancel }) {
         placeholder="Duration (min)"
       />
 
-      <button type="submit" className="btn-edit">{editData ? "Update" : "Add"}</button>
-      {editData && (
-        <button type="button" className="btn-delete" onClick={handleCancelClick}>
-          Cancel
-        </button>
-      )}
+      <div className="form-buttons">
+        <button type="submit">{editData ? "Update" : "Add"}</button>
+        {editData && (
+          <button type="button" onClick={handleCancelClick}>
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }
