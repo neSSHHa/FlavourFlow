@@ -5,7 +5,6 @@ export default function RecipeForm({ onSave, editData, onCancel }) {
   // trenutni vrednosti polj v formi
   const [recipe, setRecipe] = useState({
     title: "",
-    ingredients: "",
     instructions: "",
     durationMinutes: ""
   });
@@ -17,7 +16,6 @@ export default function RecipeForm({ onSave, editData, onCancel }) {
     } else {
       setRecipe({
         title: "",
-        ingredients: "",
         instructions: "",
         durationMinutes: ""
       });
@@ -36,7 +34,6 @@ export default function RecipeForm({ onSave, editData, onCancel }) {
     
     setRecipe({
       title: "",
-      ingredients: "",
       instructions: "",
       durationMinutes: ""
     });
@@ -53,12 +50,6 @@ export default function RecipeForm({ onSave, editData, onCancel }) {
         value={recipe.title}
         onChange={handleChange}
         placeholder="Title"
-      />
-      <textarea
-        name="ingredients"
-        value={recipe.ingredients}
-        onChange={handleChange}
-        placeholder="Ingredients"
       />
       <textarea
         name="instructions"

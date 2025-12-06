@@ -94,3 +94,13 @@
   text-decoration: none;
 }
 
+/* Navigation links */
+nav a {
+  transition: color 0.2s ease;
+}
+
+nav a:hover {
+  color: #d9534f;
+  text-decoration: underline;
+}
+

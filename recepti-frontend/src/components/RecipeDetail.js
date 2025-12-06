@@ -16,7 +16,6 @@ const RecipeDetail = () => {
   return (
     <div className="recipe-detail">
       <h2>{recipe.title}</h2>
-      <p><strong>Ingredients:</strong> {recipe.ingredients}</p>
       <p><strong>Instructions:</strong> {recipe.instructions}</p>
       <p><strong>Duration:</strong> {recipe.durationMinutes} minutes</p>
       <Link to="/">← Back to all recipes</Link>

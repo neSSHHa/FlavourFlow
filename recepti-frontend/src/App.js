@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import RecipeDetail from './components/RecipeDetail';
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
 import SearchBox from './components/SearchBox';
+import IngredientList from './components/IngredientList';
+import IngredientForm from './components/IngredientForm';
 import './index.css';
 import './components/css/RecipeList.css';
 
@@ -11,8 +13,10 @@ function App() {
   const [recipes, setRecipes] = useState([]);
   const [editRecipe, setEditRecipe] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [ingredients, setIngredients] = useState([]);
 
   const API_URL = 'http://localhost:8080/api/recipes';
+  const INGREDIENTS_API_URL = 'http://localhost:8080/api/ingredients';
 
   const fetchRecipes = async () => {
     const res = await fetch(API_URL);
@@ -20,8 +24,15 @@ function App() {
     setRecipes(data);
   };
 
+  const fetchIngredients = async () => {
+    const res = await fetch(INGREDIENTS_API_URL);
+    const data = await res.json();
+    setIngredients(data);
+  };
+
   useEffect(() => {
     fetchRecipes();
+    fetchIngredients();
   }, []);
 
   const handleSave = async (recipe) => {
@@ -72,10 +83,52 @@ function App() {
         setRecipes(data);
     }
 
+    // Ingredients handlers
+    const handleIngredientSave = async (ingredient) => {
+        await fetch(INGREDIENTS_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(ingredient),
+        });
+        fetchIngredients();
+    };
+
+    const handleIngredientDelete = async (id) => {
+        await fetch(`${INGREDIENTS_API_URL}/${id}`, { method: 'DELETE' });
+        fetchIngredients();
+    };
+
   return (
     <Router>
       <div className="container">
         <h1>Flavor Flow</h1>
+        
+        <nav style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <Link 
+            to="/" 
+            style={{ 
+              margin: '0 15px', 
+              color: '#ff6f61', 
+              textDecoration: 'none', 
+              fontWeight: 'bold',
+              fontSize: '16px'
+            }}
+          >
+            Recipes
+          </Link>
+          <Link 
+            to="/ingredients" 
+            style={{ 
+              margin: '0 15px', 
+              color: '#ff6f61', 
+              textDecoration: 'none', 
+              fontWeight: 'bold',
+              fontSize: '16px'
+            }}
+          >
+            Ingredients
+          </Link>
+        </nav>
 
         <Routes>
           <Route
@@ -103,6 +156,18 @@ function App() {
                 />
               </>
             }
+          />
+          <Route 
+            path="/ingredients" 
+            element={
+              <>
+                <IngredientForm onSave={handleIngredientSave} />
+                <IngredientList 
+                  ingredients={ingredients} 
+                  onDelete={handleIngredientDelete} 
+                />
+              </>
+            } 
           />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
         </Routes>
