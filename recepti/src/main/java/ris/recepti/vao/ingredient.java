@@ -3,11 +3,9 @@ package ris.recepti.vao;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,19 +21,19 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Recipe {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ingredient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String title;
-    private String instructions;
-    private Integer durationMinutes;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ingredient")
     @ToString.Exclude
-    @JsonBackReference
-    private List<Recipeingredient> ingredients = new ArrayList<>();
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
+    private List<Recipeingredient> recpies = new ArrayList<>();
+
 }

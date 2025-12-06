@@ -24,11 +24,11 @@ import ris.recepti.vao.Recipe;
 public class RecipeController {
 
     /*
-    private final RecipeRepository repository;
-    public RecipeController(RecipeRepository repository) {
-        this.repository = repository;
-    }
-    */
+     * private final RecipeRepository repository;
+     * public RecipeController(RecipeRepository repository) {
+     * this.repository = repository;
+     * }
+     */
 
     @Autowired
     RecipeRepository repository;
@@ -51,20 +51,21 @@ public class RecipeController {
         return ResponseEntity.status(201).body(saved);
     }
 
-    /* 
-    @PutMapping("/{id}")
-    public ResponseEntity<Recipe> update(@PathVariable Long id, @RequestBody Recipe newData) {
-        return repository.findById(id)
-                .map(existing -> {
-                    existing.setTitle(newData.getTitle());
-                    existing.setIngredients(newData.getIngredients());
-                    existing.setInstructions(newData.getInstructions());
-                    existing.setDurationMinutes(newData.getDurationMinutes());
-                    return ResponseEntity.ok(repository.save(existing));
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-    */
+    /*
+     * @PutMapping("/{id}")
+     * public ResponseEntity<Recipe> update(@PathVariable Long id, @RequestBody
+     * Recipe newData) {
+     * return repository.findById(id)
+     * .map(existing -> {
+     * existing.setTitle(newData.getTitle());
+     * existing.setIngredients(newData.getIngredients());
+     * existing.setInstructions(newData.getInstructions());
+     * existing.setDurationMinutes(newData.getDurationMinutes());
+     * return ResponseEntity.ok(repository.save(existing));
+     * })
+     * .orElse(ResponseEntity.notFound().build());
+     * }
+     */
 
     @PutMapping("/{id}")
     public ResponseEntity<Recipe> update(@PathVariable Long id, @RequestBody Recipe newData) {
@@ -73,12 +74,10 @@ public class RecipeController {
             return ResponseEntity.notFound().build();
         }
         existing.setTitle(newData.getTitle());
-        existing.setIngredients(newData.getIngredients());
         existing.setInstructions(newData.getInstructions());
         existing.setDurationMinutes(newData.getDurationMinutes());
         return ResponseEntity.ok(repository.save(existing));
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
@@ -96,13 +95,11 @@ public class RecipeController {
 
     @GetMapping("/filter")
     public List<Recipe> filterRecipes(@RequestParam String type) {
-        if(type.equals("short")) {
+        if (type.equals("short")) {
             return repository.findByDurationMinutesLessThan(30);
-        }
-        else if(type.equals("long")) {
+        } else if (type.equals("long")) {
             return repository.findByDurationMinutesGreaterThanEqual(30);
-        }
-        else {
+        } else {
             return repository.findAll();
         }
     }
