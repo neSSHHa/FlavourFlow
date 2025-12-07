@@ -63,7 +63,7 @@ const RecipeIngredients = () => {
 
   const handleSave = async () => {
     try {
-      const res = await fetch(INGREDIENTS_API_URL, {
+      const res = await fetch(INGREDIENTS_API_URL, {  
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(ingredients),
