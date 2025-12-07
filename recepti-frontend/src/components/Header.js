@@ -29,6 +29,8 @@ const Header = ({ user, onLogout }) => {
           <nav className="main-nav">
             <Link to="/" className="nav-link">Recipes</Link>
             <Link to="/ingredients" className="nav-link">Ingredients</Link>
+              <Link to="/shopping-list" className="nav-link">Shopping list</Link>
+
           </nav>
         </div>
 

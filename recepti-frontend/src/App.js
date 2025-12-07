@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import ShoppingList from './components/ShoppingList';
 import RecipeDetail from './components/RecipeDetail';
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
@@ -179,6 +180,7 @@ function App() {
               </>
             } 
           />
+          <Route path="/shopping-list" element={<ShoppingList />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/register" element={<Register onLogin={handleLogin} />} />
