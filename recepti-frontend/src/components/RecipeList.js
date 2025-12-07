@@ -22,6 +22,11 @@ const RecipeList = ({ recipes, onEdit, onDelete }) => {
             <button className="btn-edit" onClick={() => onEdit(r)}>
               Edit
             </button>
+            <Link to={`/recipe/${r.id}/ingredients`}>
+              <button className="btn-edit" style={{ marginRight: '8px' }}>
+                Edit Ingredients
+              </button>
+            </Link>
             <button className="btn-delete" onClick={() => onDelete(r.id)}>
               Delete
             </button>

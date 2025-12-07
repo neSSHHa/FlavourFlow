@@ -7,6 +7,7 @@ import RecipeList from './components/RecipeList';
 import SearchBox from './components/SearchBox';
 import IngredientList from './components/IngredientList';
 import IngredientForm from './components/IngredientForm';
+import RecipeIngredients from './components/RecipeIngredients';
 import Login from './components/Login';
 import Register from './components/Register';
 import Header from './components/Header';
@@ -182,6 +183,7 @@ function App() {
           />
           <Route path="/shopping-list" element={<ShoppingList />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route path="/recipe/:id/ingredients" element={<RecipeIngredients />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/register" element={<Register onLogin={handleLogin} />} />
         </Routes>
