@@ -9,6 +9,7 @@ const ShoppingList = () => {
   const [selectedRecipeIds, setSelectedRecipeIds] = useState([]);
   const [recipeIngredients, setRecipeIngredients] = useState({}); // { recipeId: [dto, ...] }
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // 1) učitamo sve recepte
   useEffect(() => {
@@ -18,37 +19,104 @@ const ShoppingList = () => {
       .catch((err) => console.error('Error fetching recipes', err));
   }, []);
 
-  // 2) klik na recept (checkbox)
-  const toggleRecipe = async (recipeId) => {
-    const alreadySelected = selectedRecipeIds.includes(recipeId);
+  // 2) učitamo sačuvane izabrane recepte iz backend-a (ako je korisnik ulogovan)
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      fetch(`${API_BASE}/shopping-list/${userId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const savedRecipeIds = data || [];
+          setSelectedRecipeIds(savedRecipeIds);
+          
+          // Učitaj sastojke za sve sačuvane recepte
+          if (savedRecipeIds.length > 0) {
+            setLoading(true);
+            Promise.all(
+              savedRecipeIds.map(recipeId =>
+                fetch(`${API_BASE}/recipes/${recipeId}/ingredients`)
+                  .then(res => res.json())
+                  .then(ingredients => ({ recipeId, ingredients }))
+                  .catch(err => {
+                    console.error(`Error fetching ingredients for recipe ${recipeId}`, err);
+                    return { recipeId, ingredients: [] };
+                  })
+              )
+            ).then(results => {
+              const ingredientsMap = {};
+              results.forEach(({ recipeId, ingredients }) => {
+                ingredientsMap[recipeId] = ingredients;
+              });
+              setRecipeIngredients(ingredientsMap);
+              setLoading(false);
+            }).catch(err => {
+              console.error('Error loading ingredients', err);
+              setLoading(false);
+            });
+          }
+        })
+        .catch((err) => console.error('Error fetching shopping list', err));
+    }
+  }, []);
 
-    if (alreadySelected) {
-      // skini recept sa liste
-      setSelectedRecipeIds((prev) => prev.filter((id) => id !== recipeId));
+  // 3) sačuvaj shopping listu u backend
+  const saveShoppingList = async (newSelectedIds) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.log('User not logged in, shopping list not saved');
       return;
     }
 
-    // ako prvi put biramo ovaj recept i nemamo mu još sastojine → fetch
-    if (!recipeIngredients[recipeId]) {
-      setLoading(true);
-      try {
-        const res = await fetch(`${API_BASE}/recipes/${recipeId}/ingredients`);
-        const data = await res.json();
-        setRecipeIngredients((prev) => ({
-          ...prev,
-          [recipeId]: data,
-        }));
-      } catch (err) {
-        console.error('Error fetching ingredients for recipe', recipeId, err);
-      } finally {
-        setLoading(false);
+    setSaving(true);
+    try {
+      await fetch(`${API_BASE}/shopping-list/${userId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSelectedIds),
+      });
+    } catch (err) {
+      console.error('Error saving shopping list', err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // 4) klik na recept (checkbox)
+  const toggleRecipe = async (recipeId) => {
+    const alreadySelected = selectedRecipeIds.includes(recipeId);
+    let newSelectedIds;
+
+    if (alreadySelected) {
+      // skini recept sa liste
+      newSelectedIds = selectedRecipeIds.filter((id) => id !== recipeId);
+    } else {
+      // dodaj recept na listu
+      newSelectedIds = [...selectedRecipeIds, recipeId];
+
+      // ako prvi put biramo ovaj recept i nemamo mu još sastojine → fetch
+      if (!recipeIngredients[recipeId]) {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_BASE}/recipes/${recipeId}/ingredients`);
+          const data = await res.json();
+          setRecipeIngredients((prev) => ({
+            ...prev,
+            [recipeId]: data,
+          }));
+        } catch (err) {
+          console.error('Error fetching ingredients for recipe', recipeId, err);
+        } finally {
+          setLoading(false);
+        }
       }
     }
 
-    setSelectedRecipeIds((prev) => [...prev, recipeId]);
+    // ažuriraj state i sačuvaj u backend
+    setSelectedRecipeIds(newSelectedIds);
+    saveShoppingList(newSelectedIds);
   };
 
-  // 3) saberi gramaze za sve izabrane recepte
+  // 5) saberi gramaze za sve izabrane recepte
   const aggregatedIngredients = useMemo(() => {
     const totals = {}; // { ingredientId: { id, title, totalGrams } }
 
@@ -74,7 +142,7 @@ const ShoppingList = () => {
     return Object.values(totals);
   }, [selectedRecipeIds, recipeIngredients]);
 
-  // 4) export dugme – zasad samo prikaz
+  // 6) export dugme – zasad samo prikaz
   const handleExport = () => {
     if (aggregatedIngredients.length === 0) {
       alert('Najpre izaberi bar jedan recept.');
@@ -90,6 +158,7 @@ const ShoppingList = () => {
       <h2>Nakupovalni seznam</h2>
 
       {loading && <p>Loading...</p>}
+      {saving && <p style={{ color: '#666' }}>Saving...</p>}
 
       <div
         style={{
