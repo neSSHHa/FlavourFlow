@@ -142,15 +142,50 @@ const ShoppingList = () => {
     return Object.values(totals);
   }, [selectedRecipeIds, recipeIngredients]);
 
-  // 6) export dugme – zasad samo prikaz
-  const handleExport = () => {
-    if (aggregatedIngredients.length === 0) {
+  // 6) export button - poziva backend
+  const handleExport = async () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('Morate biti ulogovani da biste eksportovali PDF.');
+      return;
+    }
+
+    if (selectedRecipeIds.length === 0) {
       alert('Najpre izaberi bar jedan recept.');
       return;
     }
 
-    console.log('Nakupovalni seznam:', aggregatedIngredients);
-    alert('Export (samo frontend) – sadržaj je ispisan u konzoli.');
+    try {
+      const response = await fetch(`${API_BASE}/shopping-list/${userId}/export-pdf`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/pdf'
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 400) {
+          alert('Nemate recepte u shopping listi.');
+        } else {
+          throw new Error('Greška pri generisanju PDF-a');
+        }
+        return;
+      }
+
+      // Preuzmi PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `shopping-list-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      alert('Greška pri generisanju PDF-a. Pokušajte ponovo.');
+    }
   };
 
   return (
@@ -246,14 +281,48 @@ const ShoppingList = () => {
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <button
           onClick={handleExport}
-          disabled={aggregatedIngredients.length === 0}
+          disabled={selectedRecipeIds.length === 0}
           style={{
-            padding: '10px 20px',
+            padding: '12px 24px',
             fontSize: '16px',
-            cursor: aggregatedIngredients.length === 0 ? 'not-allowed' : 'pointer',
+            fontWeight: 'bold',
+            backgroundColor: selectedRecipeIds.length === 0 ? '#ccc' : '#ff6f61',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: selectedRecipeIds.length === 0 ? 'not-allowed' : 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            opacity: selectedRecipeIds.length === 0 ? 0.6 : 1,
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            if (selectedRecipeIds.length > 0) {
+              e.target.style.backgroundColor = '#e65a50';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (selectedRecipeIds.length > 0) {
+              e.target.style.backgroundColor = '#ff6f61';
+            }
           }}
         >
-          Export
+          <svg 
+            width="18" 
+            height="18" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export to PDF
         </button>
       </div>
     </div>
