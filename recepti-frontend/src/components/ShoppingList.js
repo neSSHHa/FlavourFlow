@@ -1,4 +1,3 @@
-// src/ShoppingList.js
 import React, { useEffect, useState, useMemo } from 'react';
 import './css/RecipeList.css';
 
@@ -7,11 +6,10 @@ const API_BASE = 'http://localhost:8080/api';
 const ShoppingList = () => {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipeIds, setSelectedRecipeIds] = useState([]);
-  const [recipeIngredients, setRecipeIngredients] = useState({}); // { recipeId: [dto, ...] }
+  const [recipeIngredients, setRecipeIngredients] = useState({}); 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // 1) učitamo sve recepte
   useEffect(() => {
     fetch(`${API_BASE}/recipes`)
       .then((res) => res.json())
@@ -19,7 +17,6 @@ const ShoppingList = () => {
       .catch((err) => console.error('Error fetching recipes', err));
   }, []);
 
-  // 2) učitamo sačuvane izabrane recepte iz backend-a (ako je korisnik ulogovan)
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (userId) {
@@ -29,7 +26,7 @@ const ShoppingList = () => {
           const savedRecipeIds = data || [];
           setSelectedRecipeIds(savedRecipeIds);
           
-          // Učitaj sastojke za sve sačuvane recepte
+          
           if (savedRecipeIds.length > 0) {
             setLoading(true);
             Promise.all(
@@ -59,7 +56,7 @@ const ShoppingList = () => {
     }
   }, []);
 
-  // 3) sačuvaj shopping listu u backend
+  
   const saveShoppingList = async (newSelectedIds) => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -81,19 +78,18 @@ const ShoppingList = () => {
     }
   };
 
-  // 4) klik na recept (checkbox)
+  
   const toggleRecipe = async (recipeId) => {
     const alreadySelected = selectedRecipeIds.includes(recipeId);
     let newSelectedIds;
 
     if (alreadySelected) {
-      // skini recept sa liste
+      
       newSelectedIds = selectedRecipeIds.filter((id) => id !== recipeId);
     } else {
-      // dodaj recept na listu
+      
       newSelectedIds = [...selectedRecipeIds, recipeId];
 
-      // ako prvi put biramo ovaj recept i nemamo mu još sastojine → fetch
       if (!recipeIngredients[recipeId]) {
         setLoading(true);
         try {
@@ -111,20 +107,18 @@ const ShoppingList = () => {
       }
     }
 
-    // ažuriraj state i sačuvaj u backend
     setSelectedRecipeIds(newSelectedIds);
     saveShoppingList(newSelectedIds);
   };
 
-  // 5) saberi gramaze za sve izabrane recepte
   const aggregatedIngredients = useMemo(() => {
-    const totals = {}; // { ingredientId: { id, title, totalGrams } }
+    const totals = {}; 
 
     selectedRecipeIds.forEach((recipeId) => {
       const ingList = recipeIngredients[recipeId] || [];
 
       ingList.forEach((dto) => {
-        // backend DTO: { id, title, selected, kolicinaGram }
+        
         if (!dto.selected || dto.kolicinaGram == null) return;
 
         const key = dto.id;
@@ -142,7 +136,7 @@ const ShoppingList = () => {
     return Object.values(totals);
   }, [selectedRecipeIds, recipeIngredients]);
 
-  // 6) export button - poziva backend
+  
   const handleExport = async () => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
@@ -203,7 +197,7 @@ const ShoppingList = () => {
           alignItems: 'flex-start',
         }}
       >
-        {/* LEVA STRANA – recepti */}
+        {/*  recepti */}
         <div className="recipe-list" style={{ flex: 1 }}>
           <h2>Recepti</h2>
 
@@ -254,7 +248,7 @@ const ShoppingList = () => {
           )}
         </div>
 
-        {/* DESNA STRANA – zbirni shopping list */}
+        {/*zbirni shopping list */}
         <div className="recipe-list" style={{ flex: 1 }}>
           <h2>Skupaj za nakup</h2>
 

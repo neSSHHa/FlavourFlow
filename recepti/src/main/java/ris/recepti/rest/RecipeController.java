@@ -120,26 +120,22 @@ public class RecipeController {
 
     @GetMapping("/{id}/ingredients")
     public ResponseEntity<List<IngredientSelectionDTO>> getIngredientsForRecipe(@PathVariable Long id) {
-        // 1) nađemo recept po id-ju
+        
         Recipe recipe = repository.findById(id).orElse(null);
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
 
-        // 2) uzmemo sve recipeIngredients za taj recept
         List<Recipeingredient> recipeIngredients = recipe.getIngredients();
 
-        // 3) mapa: id sastojine -> Recipeingredient
         Map<Long, Recipeingredient> mapByIngredientId = recipeIngredients.stream()
                 .collect(Collectors.toMap(
                         ri -> ri.getIngredient().getId(),
                         ri -> ri
                 ));
 
-        // 4) sve sastojine koje postoje u bazi
         List<ingredient> allIngredients = sestavinaRepository.findAll();
 
-        // 5) za svaku sastojinu napravimo DTO
         List<IngredientSelectionDTO> result = allIngredients.stream()
                 .map(ing -> {
                     Recipeingredient ri = mapByIngredientId.get(ing.getId());
@@ -163,62 +159,48 @@ public class RecipeController {
             @PathVariable Long id,
             @RequestBody List<IngredientSelectionDTO> dtos) {
 
-        // 1) nađemo recept; ako ne postoji -> 404
         Recipe recipe = repository.findById(id).orElse(null);
         if (recipe == null) {
             return ResponseEntity.notFound().build();
         }
 
-        // 2) trenutne veze recept–sastojina mapiramo po id-ju sastojine
         Map<Long, Recipeingredient> currentMap = recipe.getIngredients().stream()
                 .collect(Collectors.toMap(
                         ri -> ri.getIngredient().getId(),
                         ri -> ri
                 ));
 
-        // novi spisak veza koji će važiti posle ažuriranja
         List<Recipeingredient> newList = new ArrayList<>();
 
-        // 3) prolazimo kroz DTO-e koje je frontend poslao
         for (IngredientSelectionDTO dto : dtos) {
 
-            // nađemo sastojinu u bazi prema dto.getId()
             ingredient ing = sestavinaRepository.findById(dto.getId())
                     .orElseThrow(() -> new RuntimeException("Ingredient not found: " + dto.getId()));
 
-            // da li je već postojala veza za ovu sastojinu u ovom receptu?
             Recipeingredient existing = currentMap.get(ing.getId());
 
             if (dto.isSelected()) {
-                // ako treba da bude u receptu:
 
                 if (existing == null) {
-                    // ako veza ne postoji, pravimo novu
                     existing = new Recipeingredient();
                     existing.setRecipe(recipe);
                     existing.setIngredient(ing);
                 }
 
-                // postavimo gramažu (ako je null, stavi 0.0)
                 double grams = dto.getKolicinaGram() != null ? dto.getKolicinaGram() : 0.0;
                 existing.setKolicinaGram(grams);
 
-                // dodamo u novu listu veza
                 newList.add(existing);
             } else {
-                // ako nije selected:
-                //  - NE dodajemo u newList
-                //  - ako je postojala u currentMap, biće obrisana zbog orphanRemoval
+                
             }
         }
 
-        // 4) zamenimo staru listu veza novom
         recipe.getIngredients().clear();
         recipe.getIngredients().addAll(newList);
 
-        // 5) snimimo recept; JPA će odraditi insert/update/delete u Recipeingredient tabeli
         repository.save(recipe);
 
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build(); 
     }
 }
