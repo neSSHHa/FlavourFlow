@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import ris.recepti.dao.SestavinaRepository;
 import ris.recepti.dto.IngredientSelectionDTO;
+import ris.recepti.dto.CalculatedIngredientDTO;
 import ris.recepti.vao.Recipeingredient;
 import ris.recepti.vao.ingredient;
 
@@ -202,5 +203,31 @@ public class RecipeController {
         repository.save(recipe);
 
         return ResponseEntity.noContent().build(); 
+    }
+
+    @GetMapping("/{id}/ingredients/calculate")
+    public ResponseEntity<List<CalculatedIngredientDTO>> calculateIngredients(
+            @PathVariable Long id,
+            @RequestParam double portions) {
+        if (portions <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Recipe recipe = repository.findById(id).orElse(null);
+        if (recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // osnovne porcije = 1 (kako si napisao)
+        double factor = portions / 1.0;
+
+        List<CalculatedIngredientDTO> result = recipe.getIngredients().stream()
+                .map(ri -> new CalculatedIngredientDTO(
+                        ri.getIngredient().getId(),
+                        ri.getIngredient().getTitle(),
+                        ri.getKolicinaGram() * factor))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
     }
 }
