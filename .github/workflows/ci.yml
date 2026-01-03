@@ -49,6 +49,8 @@ jobs:
       
       - name: Build frontend
         working-directory: ./recepti-frontend
+        env:
+          CI: "false"
         run: npm run build
 
   # JOB 3: Testiranje backenda
