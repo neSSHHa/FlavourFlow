@@ -11,4 +11,5 @@ public class CalculatedIngredientDTO {
     private Long id;
     private String title;
     private double kolicinaGram;
+
 }

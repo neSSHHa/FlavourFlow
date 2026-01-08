@@ -3,13 +3,13 @@ package ris.recepti.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 import ris.recepti.dao.SestavinaRepository;
 import ris.recepti.dto.IngredientSelectionDTO;
+import ris.recepti.dto.RecipeCalculateResponseDTO;
+import ris.recepti.dto.RecipeNutritionDTO;
 import ris.recepti.dto.CalculatedIngredientDTO;
 import ris.recepti.vao.Recipeingredient;
 import ris.recepti.vao.ingredient;
@@ -91,6 +91,11 @@ public class RecipeController {
         existing.setTitle(newData.getTitle());
         existing.setInstructions(newData.getInstructions());
         existing.setDurationMinutes(newData.getDurationMinutes());
+        existing.setCalorie(newData.getCalorie());
+        existing.setFatGram(newData.getFatGram());
+        existing.setProteinGram(newData.getProteinGram());
+        existing.setCarbsGram(newData.getCarbsGram());
+
         return ResponseEntity.ok(repository.save(existing));
     }
 
@@ -121,7 +126,7 @@ public class RecipeController {
 
     @GetMapping("/{id}/ingredients")
     public ResponseEntity<List<IngredientSelectionDTO>> getIngredientsForRecipe(@PathVariable Long id) {
-        
+
         Recipe recipe = repository.findById(id).orElse(null);
         if (recipe == null) {
             return ResponseEntity.notFound().build();
@@ -132,8 +137,7 @@ public class RecipeController {
         Map<Long, Recipeingredient> mapByIngredientId = recipeIngredients.stream()
                 .collect(Collectors.toMap(
                         ri -> ri.getIngredient().getId(),
-                        ri -> ri
-                ));
+                        ri -> ri));
 
         List<ingredient> allIngredients = sestavinaRepository.findAll();
 
@@ -147,15 +151,14 @@ public class RecipeController {
                             ing.getId(),
                             ing.getTitle(),
                             selected,
-                            kolicina
-                    );
+                            kolicina);
                 })
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
     }
 
-     @PutMapping("/{id}/ingredients")
+    @PutMapping("/{id}/ingredients")
     public ResponseEntity<Void> updateIngredientsForRecipe(
             @PathVariable Long id,
             @RequestBody List<IngredientSelectionDTO> dtos) {
@@ -168,8 +171,7 @@ public class RecipeController {
         Map<Long, Recipeingredient> currentMap = recipe.getIngredients().stream()
                 .collect(Collectors.toMap(
                         ri -> ri.getIngredient().getId(),
-                        ri -> ri
-                ));
+                        ri -> ri));
 
         List<Recipeingredient> newList = new ArrayList<>();
 
@@ -193,7 +195,7 @@ public class RecipeController {
 
                 newList.add(existing);
             } else {
-                
+
             }
         }
 
@@ -202,13 +204,14 @@ public class RecipeController {
 
         repository.save(recipe);
 
-        return ResponseEntity.noContent().build(); 
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/ingredients/calculate")
-    public ResponseEntity<List<CalculatedIngredientDTO>> calculateIngredients(
+    public ResponseEntity<RecipeCalculateResponseDTO> calculateIngredients(
             @PathVariable Long id,
             @RequestParam double portions) {
+
         if (portions <= 0) {
             return ResponseEntity.badRequest().build();
         }
@@ -218,16 +221,36 @@ public class RecipeController {
             return ResponseEntity.notFound().build();
         }
 
-        // osnovne porcije = 1 (kako si napisao)
+        // osnovne porcije = 1 (kako si rekla)
         double factor = portions / 1.0;
 
-        List<CalculatedIngredientDTO> result = recipe.getIngredients().stream()
+        // 1) preračun sastojaka
+        List<CalculatedIngredientDTO> ingredients = recipe.getIngredients().stream()
                 .map(ri -> new CalculatedIngredientDTO(
                         ri.getIngredient().getId(),
                         ri.getIngredient().getTitle(),
                         ri.getKolicinaGram() * factor))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(result);
+        // 2) preračun nutritivnih vrednosti (ukupno)
+        // Ako su null u bazi, ostavi null (ne ruši)
+        Integer calorie = recipe.getCalorie();
+        Integer protein = recipe.getProteinGram();
+        Integer fat = recipe.getFatGram();
+        Integer carbs = recipe.getCarbsGram();
+
+        RecipeNutritionDTO nutrition = new RecipeNutritionDTO(
+                calorie == null ? null : calorie * factor,
+                protein == null ? null : protein * factor,
+                fat == null ? null : fat * factor,
+                carbs == null ? null : carbs * factor);
+
+        RecipeCalculateResponseDTO response = new RecipeCalculateResponseDTO(
+                portions,
+                factor,
+                ingredients,
+                nutrition);
+
+        return ResponseEntity.ok(response);
     }
 }
