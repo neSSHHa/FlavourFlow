@@ -34,6 +34,11 @@ public class Recipe {
     private String instructions;
     private Integer durationMinutes;
 
+    private Integer calorie;
+    private Integer proteinGram;
+    private Integer fatGram;
+    private Integer carbsGram;
+
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @JsonBackReference
