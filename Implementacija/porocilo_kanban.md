@@ -86,7 +86,6 @@ Product Owner (PO) je član ekipe, ki poleg razvojnega dela opravlja tudi vlogo 
 ### Komunikacija z asistenti
 
 #### Kanal komunikacije:
-- **Microsoft Teams** - primarni kanal za hitro komunikacijo
 - **E-mail** - za formalnejša sporočila in dokumentacijo
 
 #### Vrste komunikacije:
@@ -102,29 +101,6 @@ Product Owner (PO) je član ekipe, ki poleg razvojnega dela opravlja tudi vlogo 
 2. **Prioritizacija** - PO dodeljuje prioritete nalogam na podlagi komunikacije z asistenti
 3. **Klarifikacija zahtev** - PO pojasni nejasnosti v zahtevah pred začetkom dela
 4. **Spremljanje napredka** - PO spremlja napredek in obvešča asistenti o statusu
-
-### Praktični primeri:
-
-**Primer 1: Pregled stanja**
-```
-Asistent: "Kako napreduje razvoj funkcionalnosti za hranilne vrednosti?"
-Product Owner: "Trenutno imamo 2 nalogi v 'Doing' stolpcu. Implementacija prikaza 
-je skoraj dokončana, dokumentacija je v pripravi. Ocenjujem, da bo vse dokončano 
-v naslednjih 2 dneh."
-```
-
-**Primer 2: Sprememba zahtev**
-```
-Asistent: "Dodajmo še prikaz vitaminskih vrednosti."
-Product Owner: "Zabeleženo. To bom dodal kot novo nalogo v 'To Do' z srednjo 
-prioriteto, saj trenutno delamo na osnovnih hranilnih vrednostih."
-```
-
-**Primer 3: Demonstracija**
-```
-Product Owner: "Lahko organiziramo kratko demo sejo, kjer pokažem trenutno 
-implementacijo prikaza hranilnih vrednosti. Kdaj vam ustreza?"
-```
 
 ---
 
@@ -206,67 +182,6 @@ Naloge smo ocenili z **story pointi (SP)**, kjer 1 SP približno ustreza **pol u
 - **Dnevno pregledovanje**: Ekipa je vsak dan pregledala Kanban tablo
 - **Ažuriranje statusa**: Naloge so bile posodobljene glede na napredek
 - **Komunikacija**: Product Owner je redno obveščal ekipo o spremembah
-
----
-
-## Uporaba Kanban table v praksi
-
-### GitHub Projects
-
-Za organizacijo dela smo uporabili **GitHub Projects** (integrated Kanban board):
-
-#### Prednosti GitHub Projects:
-- **Integracija z Issues**: Naloge so vezane na GitHub Issues
-- **Avtomatično sledenje**: Commit-i in pull request-i se avtomatično povežejo z nalogami
-- **Oznake (Labels)**: Enostavno dodeljevanje prioritet in kategorij
-- **Filtri**: Možnost filtriranja nalog po različnih kriterijih
-
-#### Struktura na GitHubu:
-
-```
-Project: FlavourFlow - Hranilne vrednosti
-├── To Do (Backlog)
-│   ├── [Backend, Visoka, 1 SP] Razširitev podatkovnega modela z hranilnimi vrednostmi
-│   ├── [Backend, Srednja, 2 SP] Izračun deleža dnevne hranljive vrednosti
-│   ├── [Backend, Nizka, 2 SP] API in logika za prenos hranilnih vrednosti
-│   ├── [Frontend, Visoka, 2 SP] Vnos hranilnih vrednosti pri ustvarjanju in urejanju recepta
-│   ├── [Frontend, Visoka, 2 SP] Prikaz hranilnih vrednosti na strani recepta
-│   ├── [Frontend, Visoka, 2 SP] Izgled uporabniškega vmesnika za preračun hranilnih vrednosti in DV%
-│   ├── [PO, Visoka, 1 SP] Definicija zahtev in sprejemni kriteriji za hranilne vrednosti
-│   └── [Docs, Srednja, 1 SP] Opis Kanban procesa, WIP limita in vloge PO
-├── Doing (WIP limit: 2)
-│   └── (Največ 2 nalogi sočasno - izbira glede na prioriteto)
-└── Done
-    └── (Zaključene naloge)
-```
-
-**Razporeditev nalog po tipih:**
-- **Backend**: 3 naloge (5 SP skupaj)
-- **Frontend**: 3 naloge (6 SP skupaj)
-- **PO**: 1 naloga (1 SP)
-- **Docs**: 1 naloga (1 SP)
-
-### Načela Kanbana v praksi
-
-1. **Vizualizacija dela**: Vse naloge so vidne na enem mestu
-2. **Omejevanje dela v teku**: WIP limit = 2 omogoča osredotočenost
-3. **Upravljanje toka**: Sledenje, kako hitro se naloge premikajo
-4. **Jasna pravila procesa**: Določena pravila za premikanje nalog
-5. **Izboljšave procesa**: Redna refleksija o izboljšavah
-
----
-
-## Sprejemni kriteriji
-
-✅ **Dokument obstaja v repozitoriju**
-- Dokument je shranjen v `Implementacija/porocilo_kanban.md`
-
-✅ **Jasno je razvidno, kako je bil Kanban uporabljen v praksi**
-- Dokument opisuje strukturo Kanban table
-- Razložen je WIP limit in njegova uporaba
-- Opisane so prioritetne oznake in njihova uporaba
-- Podrobno je opisana vloga Product Ownerja
-- Dokumentirana je praktična uporaba GitHub Projects
 
 ---
 
