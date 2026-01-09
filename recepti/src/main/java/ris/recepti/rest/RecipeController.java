@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import ris.recepti.dao.SestavinaRepository;
 import ris.recepti.dto.IngredientSelectionDTO;
 import ris.recepti.dto.RecipeCalculateResponseDTO;
+import ris.recepti.dto.RecipeDailyValuePercentDTO;
 import ris.recepti.dto.RecipeNutritionDTO;
 import ris.recepti.dto.CalculatedIngredientDTO;
 import ris.recepti.vao.Recipeingredient;
@@ -210,8 +211,8 @@ public class RecipeController {
     @GetMapping("/{id}/ingredients/calculate")
     public ResponseEntity<RecipeCalculateResponseDTO> calculateIngredients(
             @PathVariable Long id,
-            @RequestParam double portions) {
-
+            @RequestParam double portions,
+            @RequestParam(required = false) Double dailyCalories) {
         if (portions <= 0) {
             return ResponseEntity.badRequest().build();
         }
@@ -221,10 +222,10 @@ public class RecipeController {
             return ResponseEntity.notFound().build();
         }
 
-        // osnovne porcije = 1 (kako si rekla)
+        // osnovne porcije = 1
         double factor = portions / 1.0;
 
-        // 1) preračun sastojaka
+        // 1) preračun sestavin
         List<CalculatedIngredientDTO> ingredients = recipe.getIngredients().stream()
                 .map(ri -> new CalculatedIngredientDTO(
                         ri.getIngredient().getId(),
@@ -232,25 +233,50 @@ public class RecipeController {
                         ri.getKolicinaGram() * factor))
                 .collect(Collectors.toList());
 
-        // 2) preračun nutritivnih vrednosti (ukupno)
-        // Ako su null u bazi, ostavi null (ne ruši)
-        Integer calorie = recipe.getCalorie();
-        Integer protein = recipe.getProteinGram();
-        Integer fat = recipe.getFatGram();
-        Integer carbs = recipe.getCarbsGram();
+        // 2) preračun hranilnih vrednosti (scaled)
+        Integer calorieBase = recipe.getCalorie();
+        Integer proteinBase = recipe.getProteinGram();
+        Integer fatBase = recipe.getFatGram();
+        Integer carbsBase = recipe.getCarbsGram();
 
         RecipeNutritionDTO nutrition = new RecipeNutritionDTO(
-                calorie == null ? null : calorie * factor,
-                protein == null ? null : protein * factor,
-                fat == null ? null : fat * factor,
-                carbs == null ? null : carbs * factor);
+                calorieBase == null ? null : (int) Math.round(calorieBase * factor),
+                proteinBase == null ? null : (int) Math.round(proteinBase * factor),
+                fatBase == null ? null : (int) Math.round(fatBase * factor),
+                carbsBase == null ? null : (int) Math.round(carbsBase * factor));
+
+        // 3) DV% (user input za kalorije, ostalo standard)
+        final double PROTEIN_DV = 50.0;
+        final double FAT_DV = 70.0;
+        final double CARBS_DV = 260.0;
+
+        RecipeDailyValuePercentDTO dv = new RecipeDailyValuePercentDTO(
+                percentOrNull(nutrition.getCalorie(), dailyCalories),
+                percentOrNull(nutrition.getProteinGram(), PROTEIN_DV),
+                percentOrNull(nutrition.getFatGram(), FAT_DV),
+                percentOrNull(nutrition.getCarbsGram(), CARBS_DV));
 
         RecipeCalculateResponseDTO response = new RecipeCalculateResponseDTO(
                 portions,
                 factor,
                 ingredients,
-                nutrition);
+                nutrition,
+                dv);
 
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Vrne % ali null, če ni podatkov ali je referenca neveljavna.
+     */
+    private Integer percentOrNull(Integer value, Double reference) {
+        if (value == null)
+            return null;
+        if (reference == null || reference <= 0)
+            return null;
+
+        double pct = (value.doubleValue() / reference.doubleValue()) * 100.0;
+        return (int) Math.round(pct);
+    }
+
 }

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecipeNutritionDTO {
-    private Double calorie; // kcal
-    private Double proteinGram; // g
-    private Double fatGram; // g
-    private Double carbsGram; // g
+    private Integer calorie; // kcal
+    private Integer proteinGram; // g
+    private Integer fatGram; // g
+    private Integer carbsGram; // g
 }

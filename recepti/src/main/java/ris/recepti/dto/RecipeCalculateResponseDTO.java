@@ -13,4 +13,7 @@ public class RecipeCalculateResponseDTO {
     private double factor;
     private List<CalculatedIngredientDTO> ingredients;
     private RecipeNutritionDTO nutrition;
+
+    private RecipeDailyValuePercentDTO dailyValuePercent;
+
 }
