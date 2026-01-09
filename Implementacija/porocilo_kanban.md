@@ -12,29 +12,52 @@ Kanban je agilna metodologija za upravljanje razvoja programske opreme, ki temel
 
 Naša Kanban tabla je organizirana v naslednje stolpce:
 
-1. **To Do** - Naloge, ki so načrtovane, vendar še niso začete
-2. **Doing** - Naloge, ki so trenutno v izvajanju
-3. **Done** - Naloge, ki so zaključene
+1. **Backlog** - Naloge, ki so načrtovane in definirane, vendar še niso pripravljene za delo
+2. **Ready** - Naloge, ki so pripravljene za začetek dela (zahteve so jasne, odvisnosti so rešene, naloge so prioritizirane)
+3. **In Progress** - Naloge, ki so trenutno v izvajanju (člani ekipe aktivno delajo na njih)
+4. **In Review** - Naloge, ki so dokončane in čakajo na pregled (code review, testiranje, pregled dokumentacije)
+5. **Done** - Naloge, ki so zaključene, pregledane in odobrene
 
 ### Work In Progress (WIP) limit
 
-**WIP limit za stolpec "Doing" = 2**
+**WIP limit za stolpec "In Progress" = 2**
 
-To pomeni, da lahko sočasno delamo največ **2 nalogi**. Ko je limit dosežen, mora ekipa dokončati eno od nalog v "Doing" stolpcu, preden lahko začne novo.
+To pomeni, da lahko sočasno delamo največ **2 nalogi** v stolpcu "In Progress". Ko je limit dosežen, mora ekipa dokončati eno od nalog v "In Progress" stolpcu in jo premakniti v "In Review", preden lahko začne novo nalogo iz "Ready" stolpca.
 
 #### Razlogi za WIP limit:
 
 - **Preprečevanje preobremenitve** - Ekipa se lahko osredotoči na manj nalog hkrati
 - **Hitrejše dokončevanje** - Manj nalog v teku pomeni hitrejše zaključevanje posameznih nalog
-- **Lahje odkrivanje ozkih grl** - Če naloge dolgo ostanejo v "Doing", je očiten problem
+- **Lahko odkrivanje ozkih grl** - Če naloge dolgo ostanejo v "In Progress", je očiten problem
 - **Izboljšana kvaliteta** - Več časa za vsako nalogo pomeni boljšo kvaliteto
+- **Učinkovitejši tok dela** - Preprečuje kopičenje nalog in omogoča kontinuirano izvajanje
+
+#### Določitev WIP limita:
+
+WIP limit 2 smo določili glede na:
+- **Velikost ekipe** - število članov, ki sočasno delajo na projektu
+- **Vrsto nalog** - kompleksnost in trajanje posameznih nalog (večina nalog je ocenjena na 1-2 SP, kar pomeni pol ure do eno uro dela)
+- **Kapacitete ekipe** - realna ocena, koliko nalog lahko ekipa sočasno kvalitetno izvede
+- **Optimizacijo toka** - želja po kontinuiranem toku dela brez preobremenitve in s hitrim zaključevanjem nalog
+
+V našem primeru smo se odločili za limit 2, ker:
+- Omogoča dovolj fleksibilnosti za vzporedno delo več članov ekipe
+- Preprečuje preobremenitev posameznih članov ekipe
+- Zagotavlja, da se naloge redno dokončujejo in ne kopičijo v "In Progress"
+- Omogoča hitro dokončevanje in premikanje nalog skozi tok dela
 
 #### Uporaba WIP limita v praksi:
 
-Ko je limit dosežen (2 nalogi v "Doing"), mora ekipa:
-1. Dokončati eno od nalog v "Doing" stolpcu
-2. Premakniti dokončano nalogo v "Done"
-3. Šele nato lahko premakne novo nalogo iz "To Do" v "Doing"
+Ko je limit dosežen (2 nalogi v "In Progress"), mora ekipa:
+1. Dokončati eno od nalog v "In Progress" stolpcu
+2. Premakniti dokončano nalogo v "In Review" (za pregled/testiranje)
+3. Šele nato lahko premakne novo nalogo iz "Ready" v "In Progress"
+
+Naloge se premikajo skozi tok dela:
+- **Backlog → Ready**: Ko so zahteve jasne in naloga je pripravljena
+- **Ready → In Progress**: Ko je član ekipe pripravljen začeti (ob upoštevanju WIP limita)
+- **In Progress → In Review**: Ko je naloga dokončana
+- **In Review → Done**: Ko je naloga pregledana in odobrena
 
 ---
 
@@ -51,7 +74,7 @@ Za vsako nalogo uporabljamo prioritetne oznake, ki določajo njeno pomembnost:
 ### Uporaba prioritet v Kanban tabli:
 
 1. **Označevanje nalog**: Vsaka naloga dobi ustrezen label glede na svojo pomembnost
-2. **Izbira naslednje naloge**: Ko je prostor v "Doing" stolpcu, izberemo nalogo z najvišjo prioriteto iz "To Do"
+2. **Izbira naslednje naloge**: Ko je prostor v "In Progress" stolpcu (WIP limit ni dosežen), izberemo nalogo z najvišjo prioriteto iz "Ready"
 3. **Replaniranje**: V primeru sprememb zahtev ali odkritih napak, lahko prioriteto naloge spremenimo
 
 ### Primeri prioritet iz našega projekta:
@@ -172,10 +195,11 @@ Naloge smo ocenili z **story pointi (SP)**, kjer 1 SP približno ustreza **pol u
 
 ### Faza 3: Premikanje nalog med stolpci
 
-1. **Začetek**: Vse naloge so bile v "To Do" stolpcu
-2. **Začetek dela**: Ko je član ekipe začel delati na nalogi, jo je premaknil v "Doing"
-3. **Upoštevanje WIP limita**: Ob premiku v "Doing" smo preverili, ali je limit dosežen
-4. **Dokončanje**: Ko je naloga zaključena, jo premaknemo v "Done"
+1. **Začetek**: Vse naloge so bile v "Backlog" stolpcu
+2. **Priprava**: Ko so zahteve jasne, se naloge premaknejo v "Ready"
+3. **Začetek dela**: Ko je član ekipe začel delati na nalogi, jo je premaknil v "In Progress" (ob upoštevanju WIP limita 2)
+4. **Pregled**: Ko je naloga zaključena, jo premaknemo v "In Review" za pregled/testiranje
+5. **Dokončanje**: Ko je naloga pregledana in odobrena, jo premaknemo v "Done"
 
 ### Faza 4: Spremljanje napredka
 
