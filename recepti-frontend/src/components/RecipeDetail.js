@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
-const RecipeDetail = () => {
+const RecipeDetail = ({ favorites, onToggleFavorite, user }) => {
   const { id } = useParams();
 
   const [recipe, setRecipe] = useState(null);
@@ -66,9 +66,42 @@ const RecipeDetail = () => {
   };
   const displayPortions = calculated?.portions || 1;
 
+  const isFavorite = favorites && favorites.has(parseInt(id));
+
+  const handleFavoriteClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onToggleFavorite && user) {
+      onToggleFavorite(parseInt(id));
+    }
+  };
+
   return (
     <div className="recipe-detail">
-      <h2>{recipe.title}</h2>
+      <div className="recipe-detail-header">
+        <h2>{recipe.title}</h2>
+        {user && (
+          <button
+            className={`favorite-btn-detail ${isFavorite ? 'active' : ''}`}
+            onClick={handleFavoriteClick}
+            aria-label={isFavorite ? 'Odstrani iz priljubljenih' : 'Dodaj med priljubljene'}
+            title={isFavorite ? 'Odstrani iz priljubljenih' : 'Dodaj med priljubljene'}
+          >
+            <svg 
+              className="heart-icon-detail" 
+              viewBox="0 0 24 24" 
+              fill={isFavorite ? '#ff6f61' : 'none'} 
+              stroke={isFavorite ? '#ff6f61' : 'currentColor'}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span className="heart-particles-detail"></span>
+          </button>
+        )}
+      </div>
       <p><strong>Instructions:</strong> {recipe.instructions}</p>
       <p><strong>Duration:</strong> {recipe.durationMinutes} minutes</p>
 

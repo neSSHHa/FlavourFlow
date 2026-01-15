@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ShoppingList from './components/ShoppingList';
 import RecipeDetail from './components/RecipeDetail';
 import RecipeForm from './components/RecipeForm';
@@ -21,9 +21,11 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [user, setUser] = useState(null);
+  const [favorites, setFavorites] = useState(new Set());
 
   const API_URL = 'http://localhost:8080/api/recipes';
   const INGREDIENTS_API_URL = 'http://localhost:8080/api/ingredients';
+  const FAVORITES_API_URL = 'http://localhost:8080/api/favorites';
 
   const fetchRecipes = async () => {
     const res = await fetch(API_URL);
@@ -51,11 +53,76 @@ function App() {
         role: role,
         token: token
       });
+      // Naloži priljubljene recepte
+      fetchFavorites(userId);
     }
 
     fetchRecipes();
     fetchIngredients();
   }, []);
+
+  // Naloži priljubljene recepte
+  const fetchFavorites = async (userId) => {
+    if (!userId) return;
+    try {
+      const res = await fetch(`${FAVORITES_API_URL}/${userId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setFavorites(new Set(data));
+      }
+    } catch (err) {
+      console.error('Error fetching favorites:', err);
+    }
+  };
+
+  // Dodaj/odstrani priljubljeni recept (optimistična posodobitev)
+  const toggleFavorite = async (recipeId) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('Morate biti prijavljeni za dodajanje priljubljenih receptov.');
+      return;
+    }
+
+    const isFavorite = favorites.has(recipeId);
+    
+    // Optimistična posodobitev - takoj posodobi UI
+    setFavorites(prev => {
+      const newSet = new Set(prev);
+      if (isFavorite) {
+        newSet.delete(recipeId);
+      } else {
+        newSet.add(recipeId);
+      }
+      return newSet;
+    });
+
+    try {
+      if (isFavorite) {
+        // Odstrani iz priljubljenih
+        await fetch(`${FAVORITES_API_URL}/${userId}/${recipeId}`, {
+          method: 'DELETE'
+        });
+      } else {
+        // Dodaj med priljubljene
+        await fetch(`${FAVORITES_API_URL}/${userId}/${recipeId}`, {
+          method: 'POST'
+        });
+      }
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+      // Vrnimo na prejšnje stanje v primeru napake
+      setFavorites(prev => {
+        const newSet = new Set(prev);
+        if (isFavorite) {
+          newSet.add(recipeId);
+        } else {
+          newSet.delete(recipeId);
+        }
+        return newSet;
+      });
+      alert('Napaka pri shranjevanju priljubljenega recepta.');
+    }
+  };
 
   const handleSave = async (recipe) => {
     if (editRecipe) {
@@ -165,6 +232,9 @@ function App() {
                   recipes={recipes}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                  user={user}
                 />
               </>
             }
@@ -182,7 +252,7 @@ function App() {
             } 
           />
           <Route path="/shopping-list" element={<ShoppingList />} />
-          <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route path="/recipe/:id" element={<RecipeDetail favorites={favorites} onToggleFavorite={toggleFavorite} user={user} />} />
           <Route path="/recipe/:id/ingredients" element={<RecipeIngredients />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/register" element={<Register onLogin={handleLogin} />} />
