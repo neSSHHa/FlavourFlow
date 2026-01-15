@@ -29,8 +29,10 @@ const Header = ({ user, onLogout }) => {
           <nav className="main-nav">
             <Link to="/" className="nav-link">Recipes</Link>
             <Link to="/ingredients" className="nav-link">Ingredients</Link>
-              <Link to="/shopping-list" className="nav-link">Shopping list</Link>
-
+            <Link to="/shopping-list" className="nav-link">Shopping list</Link>
+            {user && (
+              <Link to="/favorites" className="nav-link">Favorites</Link>
+            )}
           </nav>
         </div>
 

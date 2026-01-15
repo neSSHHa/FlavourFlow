@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import ShoppingList from './components/ShoppingList';
 import RecipeDetail from './components/RecipeDetail';
 import RecipeForm from './components/RecipeForm';
@@ -11,6 +11,7 @@ import RecipeIngredients from './components/RecipeIngredients';
 import Login from './components/Login';
 import Register from './components/Register';
 import Header from './components/Header';
+import FavoritesList from './components/FavoritesList';
 import './index.css';
 import './components/css/RecipeList.css';
 import './components/css/Header.css';
@@ -64,11 +65,22 @@ function App() {
   // Naloži priljubljene recepte
   const fetchFavorites = async (userId) => {
     if (!userId) return;
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
     try {
-      const res = await fetch(`${FAVORITES_API_URL}/${userId}`);
+      const res = await fetch(FAVORITES_API_URL, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (res.ok) {
         const data = await res.json();
-        setFavorites(new Set(data));
+        // Pretvori listu Recipe objekata u Set recipe ID-jev
+        const recipeIds = data.map(recipe => recipe.id);
+        setFavorites(new Set(recipeIds));
       }
     } catch (err) {
       console.error('Error fetching favorites:', err);
@@ -77,8 +89,8 @@ function App() {
 
   // Dodaj/odstrani priljubljeni recept (optimistična posodobitev)
   const toggleFavorite = async (recipeId) => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
+    const token = localStorage.getItem('token');
+    if (!token) {
       alert('Morate biti prijavljeni za dodajanje priljubljenih receptov.');
       return;
     }
@@ -99,13 +111,21 @@ function App() {
     try {
       if (isFavorite) {
         // Odstrani iz priljubljenih
-        await fetch(`${FAVORITES_API_URL}/${userId}/${recipeId}`, {
-          method: 'DELETE'
+        await fetch(`${FAVORITES_API_URL}/${recipeId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
       } else {
         // Dodaj med priljubljene
-        await fetch(`${FAVORITES_API_URL}/${userId}/${recipeId}`, {
-          method: 'POST'
+        await fetch(`${FAVORITES_API_URL}/${recipeId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
       }
     } catch (err) {
@@ -190,14 +210,20 @@ function App() {
   // Auth handlers
   const handleLogin = (userData) => {
     setUser(userData);
+    // Naloži priljubljene recepte nakon prijave
+    if (userData.userId) {
+      fetchFavorites(userData.userId);
+    }
   };
 
   const handleLogout = () => {
     setUser(null);
+    setFavorites(new Set());
   };
 
-  return (
-    <Router>
+  // Wrapper komponenta koja prati navigaciju
+  const AppContent = () => {
+    return (
       <div className="container">
         <Header user={user} onLogout={handleLogout} />
 
@@ -252,12 +278,25 @@ function App() {
             } 
           />
           <Route path="/shopping-list" element={<ShoppingList />} />
+          <Route path="/favorites" element={<FavoritesList user={user} onFavoriteRemoved={(recipeId) => {
+            setFavorites(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(recipeId);
+              return newSet;
+            });
+          }} />} />
           <Route path="/recipe/:id" element={<RecipeDetail favorites={favorites} onToggleFavorite={toggleFavorite} user={user} />} />
           <Route path="/recipe/:id/ingredients" element={<RecipeIngredients />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/register" element={<Register onLogin={handleLogin} />} />
         </Routes>
       </div>
+    );
+  };
+
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
